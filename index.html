@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Async Lab - Event Loop & Promises</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 JavaScript Asynchronous Programming Lab</h1>
+        <p>Understanding Event Loop, Promises, and Async/Await</p>
+
+        <div class="controls">
+            <button onclick="runExercise(1)">Exercise 1: Sync Code</button>
+            <button onclick="runExercise(2)">Exercise 2: setTimeout</button>
+            <button onclick="runExercise(3)">Exercise 3: Promises</button>
+            <button onclick="runExercise(4)">Exercise 4: Micro vs Macro</button>
+            <button onclick="runExercise(5)">Exercise 5: Async/Await</button>
+            <button onclick="runExercise(6)">Exercise 6: Challenge</button>
+            <button onclick="clearOutput()" class="clear">Clear Output</button>
+        </div>
+
+        <div class="output-section">
+            <h2>📤 Output:</h2>
+            <div id="output" class="output"></div>
+        </div>
+
+        <div class="explanation-section">
+            <h2>📖 Explanation:</h2>
+            <div id="explanation" class="explanation">
+                Click any button to run the exercise and see the output
+            </div>
+        </div>
+
+        <div class="event-loop-diagram">
+            <h2>🔄 Event Loop Visualization:</h2>
+            <div class="diagram">
+                <div class="call-stack">Call Stack</div>
+                <div class="arrow">↓</div>
+                <div class="web-apis">Web APIs</div>
+                <div class="arrow">↓</div>
+                <div class="callback-queue">
+                    <span>Callback Queue</span>
+                    <span class="micro">Microtask Queue</span>
+                </div>
+                <div class="arrow">↑</div>
+                <div class="event-loop">Event Loop</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="exercises/exercise1.js"></script>
+    <script src="exercises/exercise2.js"></script>
+    <script src="exercises/exercise3.js"></script>
+    <script src="exercises/exercise4.js"></script>
+    <script src="exercises/exercise5.js"></script>
+    <script src="exercises/exercise6.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
