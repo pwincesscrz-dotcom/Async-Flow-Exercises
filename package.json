@@ -1,0 +1,16 @@
+{
+  "name": "js-async-lab",
+  "version": "1.0.0",
+  "description": "JavaScript Asynchronous Programming Lab - Event Loop, Promises, Async/Await",
+  "main": "script.js",
+  "scripts": {
+    "start": "http-server -p 8080",
+    "test": "node test.js"
+  },
+  "keywords": ["javascript", "async", "event-loop", "promises", "settimeout"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
