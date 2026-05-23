@@ -1,0 +1,157 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.container > p {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+button {
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+button.clear {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.output-section, .explanation-section {
+    margin-top: 20px;
+}
+
+.output {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 20px;
+    border-radius: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    min-height: 200px;
+    white-space: pre-wrap;
+    overflow-x: auto;
+}
+
+.output-line {
+    padding: 4px 0;
+    border-bottom: 1px solid #333;
+}
+
+.output-line:last-child {
+    border-bottom: none;
+}
+
+.explanation {
+    background: #f0f4ff;
+    padding: 20px;
+    border-radius: 10px;
+    color: #333;
+    line-height: 1.6;
+}
+
+.event-loop-diagram {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.call-stack, .web-apis, .event-loop {
+    background: #667eea;
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    width: 200px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.callback-queue {
+    background: #764ba2;
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    width: 300px;
+    text-align: center;
+    display: flex;
+    justify-content: space-around;
+}
+
+.callback-queue span {
+    background: rgba(255,255,255,0.2);
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.micro {
+    background: #f093fb !important;
+}
+
+.arrow {
+    font-size: 24px;
+    color: #667eea;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+    
+    button {
+        padding: 8px 16px;
+        font-size: 12px;
+    }
+}
