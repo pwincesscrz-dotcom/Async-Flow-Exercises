@@ -4,21 +4,185 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JavaScript Async Lab - Event Loop & Promises</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .clear-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .output-section, .explanation-section {
+            margin-top: 20px;
+        }
+
+        .output {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            min-height: 250px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+
+        .output-line {
+            padding: 4px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .output-line:last-child {
+            border-bottom: none;
+        }
+
+        .explanation {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 10px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .event-loop-diagram {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .call-stack, .web-apis, .event-loop {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            width: 200px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .callback-queue {
+            background: #764ba2;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .callback-queue span {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .micro {
+            background: #f093fb !important;
+        }
+
+        .arrow {
+            font-size: 24px;
+            color: #667eea;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 1.3rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            button {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>🔄 JavaScript Asynchronous Programming Lab</h1>
-        <p>Understanding Event Loop, Promises, and Async/Await</p>
+        <p class="subtitle">Understanding Event Loop, Promises, Microtasks, Macrotasks, and Async/Await</p>
 
         <div class="controls">
-            <button onclick="runExercise(1)">Exercise 1: Sync Code</button>
-            <button onclick="runExercise(2)">Exercise 2: setTimeout</button>
-            <button onclick="runExercise(3)">Exercise 3: Promises</button>
-            <button onclick="runExercise(4)">Exercise 4: Micro vs Macro</button>
-            <button onclick="runExercise(5)">Exercise 5: Async/Await</button>
-            <button onclick="runExercise(6)">Exercise 6: Challenge</button>
-            <button onclick="clearOutput()" class="clear">Clear Output</button>
+            <button onclick="runExercise(1)">📝 Ex1: Sync Code</button>
+            <button onclick="runExercise(2)">⏰ Ex2: setTimeout</button>
+            <button onclick="runExercise(3)">🔮 Ex3: Promises</button>
+            <button onclick="runExercise(4)">⚡ Ex4: Micro vs Macro</button>
+            <button onclick="runExercise(5)">🔄 Ex5: Async/Await</button>
+            <button onclick="runExercise(6)">🏆 Ex6: Challenge</button>
+            <button onclick="clearOutput()" class="clear-btn">🗑️ Clear Output</button>
         </div>
 
         <div class="output-section">
@@ -29,33 +193,384 @@
         <div class="explanation-section">
             <h2>📖 Explanation:</h2>
             <div id="explanation" class="explanation">
-                Click any button to run the exercise and see the output
+                Click any button above to run an exercise and see the output
             </div>
         </div>
 
         <div class="event-loop-diagram">
             <h2>🔄 Event Loop Visualization:</h2>
             <div class="diagram">
-                <div class="call-stack">Call Stack</div>
+                <div class="call-stack">📚 Call Stack</div>
                 <div class="arrow">↓</div>
-                <div class="web-apis">Web APIs</div>
+                <div class="web-apis">🌐 Web APIs</div>
                 <div class="arrow">↓</div>
                 <div class="callback-queue">
-                    <span>Callback Queue</span>
-                    <span class="micro">Microtask Queue</span>
+                    <span>📋 Macrotask Queue</span>
+                    <span class="micro">⚡ Microtask Queue</span>
                 </div>
                 <div class="arrow">↑</div>
-                <div class="event-loop">Event Loop</div>
+                <div class="event-loop">🔄 Event Loop</div>
             </div>
         </div>
     </div>
 
-    <script src="exercises/exercise1.js"></script>
-    <script src="exercises/exercise2.js"></script>
-    <script src="exercises/exercise3.js"></script>
-    <script src="exercises/exercise4.js"></script>
-    <script src="exercises/exercise5.js"></script>
-    <script src="exercises/exercise6.js"></script>
-    <script src="script.js"></script>
+    <script>
+        // ============================================
+        // OUTPUT MANAGEMENT
+        // ============================================
+        
+        let outputBuffer = [];
+
+        function addToOutput(message) {
+            outputBuffer.push(message);
+            updateOutput();
+            console.log(message);
+        }
+
+        function updateOutput() {
+            const outputDiv = document.getElementById('output');
+            if (outputDiv) {
+                outputDiv.innerHTML = outputBuffer.map(msg => 
+                    `<div class="output-line">${escapeHtml(msg)}</div>`
+                ).join('');
+                outputDiv.scrollTop = outputDiv.scrollHeight;
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function clearOutput() {
+            outputBuffer = [];
+            updateOutput();
+            document.getElementById('explanation').innerHTML = 'Output cleared. Click a button to run an exercise.';
+        }
+
+        function setExplanation(text) {
+            const explanationDiv = document.getElementById('explanation');
+            if (explanationDiv) {
+                explanationDiv.innerHTML = text;
+            }
+        }
+
+        // ============================================
+        // EXERCISE 1: Synchronous Execution
+        // ============================================
+        
+        function exercise1() {
+            addToOutput("═══════════════════════════════════════");
+            addToOutput("📝 EXERCISE 1: Synchronous Execution");
+            addToOutput("═══════════════════════════════════════\n");
+            
+            addToOutput("▶️ Running synchronous code...\n");
+            addToOutput("A");
+            addToOutput("B");
+            addToOutput("C");
+            
+            addToOutput("\n✅ Synchronous code executed in order!");
+            addToOutput("═══════════════════════════════════════\n");
+            
+            setExplanation(`
+                <strong>📚 EXERCISE 1: Synchronous Execution Explanation</strong><br><br>
+                <strong>Output:</strong> A → B → C<br><br>
+                <strong>What happened?</strong><br>
+                JavaScript executes code synchronously by default, meaning one line at a time in order.
+                Each console.log statement runs immediately in sequence: A → B → C.<br><br>
+                <strong>Key Concept:</strong> The Call Stack processes each function call completely 
+                before moving to the next. This is blocking behavior - if one operation takes time, 
+                everything waits.<br><br>
+                <strong>Code executed:</strong><br>
+                <code>
+                console.log("A");<br>
+                console.log("B");<br>
+                console.log("C");
+                </code>
+            `);
+        }
+
+        // ============================================
+        // EXERCISE 2: setTimeout (Macrotask)
+        // ============================================
+        
+        function exercise2() {
+            addToOutput("═══════════════════════════════════════");
+            addToOutput("⏰ EXERCISE 2: setTimeout (Macrotask)");
+            addToOutput("═══════════════════════════════════════\n");
+            
+            addToOutput("▶️ Running setTimeout example...\n");
+            
+            addToOutput("Start");
+            
+            setTimeout(() => {
+                addToOutput("Timeout");
+            }, 0);
+            
+            addToOutput("End");
+            
+            addToOutput("\n✅ setTimeout with 0ms delay still runs AFTER synchronous code!");
+            addToOutput("═══════════════════════════════════════\n");
+            
+            setExplanation(`
+                <strong>⏰ EXERCISE 2: setTimeout and Macrotasks Explanation</strong><br><br>
+                <strong>Output:</strong> Start → End → Timeout<br><br>
+                <strong>What happened?</strong><br>
+                setTimeout schedules a callback to run after the specified delay (0ms here).
+                Even with 0ms delay, it doesn't run immediately!<br><br>
+                <strong>Why?</strong> setTimeout is a Web API. When called, it's moved to the Web API environment.
+                After the timer expires, the callback goes to the Callback Queue (Macrotask Queue).
+                The Event Loop only moves it to the Call Stack when the stack is empty.<br><br>
+                <strong>Code executed:</strong><br>
+                <code>
+                console.log("Start");<br>
+                setTimeout(() => { console.log("Timeout"); }, 0);<br>
+                console.log("End");
+                </code>
+            `);
+        }
+
+        // ============================================
+        // EXERCISE 3: Promises (Microtask)
+        // ============================================
+        
+        function exercise3() {
+            addToOutput("═══════════════════════════════════════");
+            addToOutput("🔮 EXERCISE 3: Promises (Microtask)");
+            addToOutput("═══════════════════════════════════════\n");
+            
+            addToOutput("▶️ Running Promise example...\n");
+            
+            addToOutput("Start");
+            
+            Promise.resolve().then(() => {
+                addToOutput("Promise");
+            });
+            
+            addToOutput("End");
+            
+            addToOutput("\n✅ Promise.then() runs before setTimeout because it's a Microtask!");
+            addToOutput("═══════════════════════════════════════\n");
+            
+            setExplanation(`
+                <strong>🔮 EXERCISE 3: Promises and Microtasks Explanation</strong><br><br>
+                <strong>Output:</strong> Start → End → Promise<br><br>
+                <strong>What happened?</strong><br>
+                Promise.then() callbacks are Microtasks, which have HIGHER priority than Macrotasks (setTimeout).<br><br>
+                <strong>Why?</strong> After each task in the Call Stack completes, the Event Loop checks the 
+                Microtask Queue first before moving to the Macrotask Queue. This ensures Promise callbacks 
+                execute as soon as possible.<br><br>
+                <strong>Code executed:</strong><br>
+                <code>
+                console.log("Start");<br>
+                Promise.resolve().then(() => { console.log("Promise"); });<br>
+                console.log("End");
+                </code>
+            `);
+        }
+
+        // ============================================
+        // EXERCISE 4: Microtask vs Macrotask Comparison
+        // ============================================
+        
+        function exercise4() {
+            addToOutput("═══════════════════════════════════════");
+            addToOutput("⚡ EXERCISE 4: Microtask vs Macrotask");
+            addToOutput("═══════════════════════════════════════\n");
+            
+            addToOutput("▶️ Running Microtask vs Macrotask comparison...\n");
+            
+            addToOutput("Start");
+            
+            setTimeout(() => {
+                addToOutput("Timeout (Macrotask)");
+            }, 0);
+            
+            Promise.resolve().then(() => {
+                addToOutput("Promise (Microtask)");
+            });
+            
+            addToOutput("End");
+            
+            addToOutput("\n✅ Microtask (Promise) runs BEFORE Macrotask (setTimeout)!");
+            addToOutput("═══════════════════════════════════════\n");
+            
+            setExplanation(`
+                <strong>⚡ EXERCISE 4: Microtask vs Macrotask Priority</strong><br><br>
+                <strong>Output:</strong> Start → End → Promise (Microtask) → Timeout (Macrotask)<br><br>
+                <strong>Why Promise runs before Timeout?</strong><br>
+                1. Synchronous code runs first (console.logs)<br>
+                2. Promise.then() goes to Microtask Queue (higher priority)<br>
+                3. setTimeout goes to Macrotask Queue (lower priority)<br>
+                4. Event Loop processes ALL Microtasks before ANY Macrotask<br><br>
+                <strong>Queue Priority:</strong> Microtask Queue > Macrotask Queue<br><br>
+                <strong>Code executed:</strong><br>
+                <code>
+                console.log("Start");<br>
+                setTimeout(() => { console.log("Timeout"); }, 0);<br>
+                Promise.resolve().then(() => { console.log("Promise"); });<br>
+                console.log("End");
+                </code>
+            `);
+        }
+
+        // ============================================
+        // EXERCISE 5: Async/Await Flow
+        // ============================================
+        
+        async function testAsync() {
+            addToOutput("1");
+            await Promise.resolve();
+            addToOutput("2");
+        }
+
+        function exercise5() {
+            addToOutput("═══════════════════════════════════════");
+            addToOutput("🔄 EXERCISE 5: Async/Await Flow");
+            addToOutput("═══════════════════════════════════════\n");
+            
+            addToOutput("▶️ Running Async/Await example...\n");
+            
+            addToOutput("3");
+            testAsync();
+            addToOutput("4");
+            
+            addToOutput("\n✅ Async function pauses at await, allowing other code to run!");
+            addToOutput("═══════════════════════════════════════\n");
+            
+            setExplanation(`
+                <strong>🔄 EXERCISE 5: Async/Await Flow Explanation</strong><br><br>
+                <strong>Output:</strong> 3 → 1 → 4 → 2<br><br>
+                <strong>Step by step breakdown:</strong><br>
+                1. console.log("3") runs first (synchronous)<br>
+                2. testAsync() is called, console.log("1") runs<br>
+                3. await Promise.resolve() pauses the function execution<br>
+                4. Control returns to the caller, console.log("4") runs<br>
+                5. After microtask queue empties, testAsync() resumes<br>
+                6. console.log("2") runs<br><br>
+                <strong>Key Insight:</strong> await makes the async function yield control, 
+                allowing other code to run in the meantime.<br><br>
+                <strong>Code executed:</strong><br>
+                <code>
+                async function test() {<br>
+                    console.log("1");<br>
+                    await Promise.resolve();<br>
+                    console.log("2");<br>
+                }<br>
+                console.log("3");<br>
+                test();<br>
+                console.log("4");
+                </code>
+            `);
+        }
+
+        // ============================================
+        // EXERCISE 6: Advanced Challenge
+        // ============================================
+        
+        function exercise6() {
+            addToOutput("═══════════════════════════════════════");
+            addToOutput("🏆 EXERCISE 6: Advanced Flow Challenge");
+            addToOutput("═══════════════════════════════════════\n");
+            
+            addToOutput("💡 PREDICT the output before running!");
+            addToOutput("----------------------------------------\n");
+            
+            addToOutput("A");
+            
+            setTimeout(() => {
+                addToOutput("B");
+            }, 0);
+            
+            Promise.resolve().then(() => {
+                addToOutput("C");
+            });
+            
+            addToOutput("D");
+            
+            addToOutput("\n----------------------------------------");
+            addToOutput("✅ CORRECT OUTPUT ORDER: A → D → C → B");
+            addToOutput("📝 Memory Aid: 'A Dog Can't Bark'");
+            addToOutput("   A (sync) → D (sync) → C (Promise/micro) → B (timeout/macro)");
+            addToOutput("═══════════════════════════════════════\n");
+            
+            setExplanation(`
+                <strong>🏆 EXERCISE 6: Advanced Challenge Explanation</strong><br><br>
+                <strong>Correct Output:</strong> A → D → C → B<br><br>
+                <strong>Step by step analysis:</strong><br><br>
+                <strong>1.</strong> console.log("A") - Synchronous, runs immediately<br>
+                <strong>2.</strong> setTimeout(callback) - Goes to Web API, then Macrotask Queue<br>
+                <strong>3.</strong> Promise.resolve().then() - Goes to Microtask Queue<br>
+                <strong>4.</strong> console.log("D") - Synchronous, runs immediately<br>
+                <strong>5.</strong> Call stack empty, Event Loop checks Microtask Queue first<br>
+                <strong>6.</strong> Promise callback runs: console.log("C")<br>
+                <strong>7.</strong> Event Loop checks Macrotask Queue<br>
+                <strong>8.</strong> setTimeout callback runs: console.log("B")<br><br>
+                
+                <strong>📊 Execution Priority Summary:</strong><br>
+                <strong>1st:</strong> Synchronous code (Call Stack)<br>
+                <strong>2nd:</strong> Microtasks (Promises, queueMicrotask, MutationObserver)<br>
+                <strong>3rd:</strong> Macrotasks (setTimeout, setInterval, I/O)<br><br>
+                
+                <strong>🧠 Memory Aid:</strong><br>
+                "A Dog Can't Bark" = A (sync), D (sync), C (Promise/micro), B (timeout/macro)<br><br>
+                
+                <strong>Code executed:</strong><br>
+                <code>
+                console.log("A");<br>
+                setTimeout(() => { console.log("B"); }, 0);<br>
+                Promise.resolve().then(() => { console.log("C"); });<br>
+                console.log("D");
+                </code>
+            `);
+        }
+
+        // ============================================
+        // MAIN CONTROLLER
+        // ============================================
+        
+        function runExercise(number) {
+            clearOutput();
+            
+            switch(number) {
+                case 1:
+                    exercise1();
+                    break;
+                case 2:
+                    exercise2();
+                    break;
+                case 3:
+                    exercise3();
+                    break;
+                case 4:
+                    exercise4();
+                    break;
+                case 5:
+                    exercise5();
+                    break;
+                case 6:
+                    exercise6();
+                    break;
+                default:
+                    addToOutput("Invalid exercise number");
+            }
+        }
+
+        // Console welcome message
+        console.log("🚀 JavaScript Async Lab Loaded!");
+        console.log("📚 Click the buttons above to run exercises");
+        console.log("🔄 Check the console for additional logs");
+        
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key >= '1' && e.key <= '6') {
+                e.preventDefault();
+                runExercise(parseInt(e.key));
+            }
+        });
+        
+        console.log("💡 Tip: Use Ctrl+1 through Ctrl+6 to run exercises quickly!");
+    </script>
 </body>
 </html>
